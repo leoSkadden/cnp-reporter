@@ -23,7 +23,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: binary
-        path: target/release/api-server
+        path: ./api-server/target/release/api-server
     - name: Run tests
       working-directory: ./api-server
       run: cargo test --verbose
