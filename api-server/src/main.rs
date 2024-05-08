@@ -142,7 +142,7 @@ mod api_init {
             config.options.port,
         ));
 
-        let listener = tokio::net::TcpListener::bind(sock_addr).await.unwrap();
+        let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
 
         tracing::info!("listening on http://{}", listener.local_addr().unwrap());
 
