@@ -23,6 +23,14 @@ function main() {
 	}
 
 	map.on('click', onMapClick);
+
+	let dbResult = context.env.DATABASE
+		.prepare("insert into locations (latitude, longitude) values (?1, ?2)")
+		.bind(28.059642)
+		.bind(-80.590976)
+		.run();
+
+	console.log(JSON.stringify(dbResult));
 }
 
 function stringFromCoords(coords) {

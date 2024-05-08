@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO Locations (latitude, longitude, date_added)\n        VALUES ($1, $2, DATETIME())",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "f4fa67df15bf3fb631183d62d2c957227631f7358b9b67edee723fd3e40038e3"
+}
