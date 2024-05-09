@@ -38,7 +38,7 @@ function main() {
 	}
 
 	let submitButton = document.getElementById("submit-btn");
-	submitButton.on('click', onSubmitClick);
+	submitButton.onclick = onSubmitClick;
 }
 
 function stringFromCoords(coords) {
