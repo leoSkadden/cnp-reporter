@@ -11,10 +11,11 @@ function main() {
 
 	let popup = L.popup();
 	let coords;
-	let coordDisplayNode = document.getElementById("coord-display");
 
 	function onMapClick(e) {
+		const coordDisplayNode = document.getElementById("coord-display");
 		coords = e.latlng;
+
 		popup
 			.setLatLng(coords)
 			.setContent("Suspected CNP infection at " + coords.toString())
@@ -24,13 +25,20 @@ function main() {
 
 	map.on('click', onMapClick);
 
-	let dbResult = context.env.DATABASE
-		.prepare("insert into locations (latitude, longitude) values (?1, ?2)")
-		.bind(28.059642)
-		.bind(-80.590976)
-		.run();
+	async function onSubmitClick(e) {
+		console.log('starting on submit click');
+		console.log(JSON.stringify(coords));
+		const response = await fetch("http://170.187.157.232:8080/api/v1/add-location", {
+			method: "POST", // or 'PUT'
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(coords),
+		});
+	}
 
-	console.log(JSON.stringify(dbResult));
+	let submitButton = document.getElementById("submit-btn");
+	submitButton.on('click', onSubmitClick);
 }
 
 function stringFromCoords(coords) {
