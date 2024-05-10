@@ -26,7 +26,7 @@ function main() {
 	map.on('click', onMapClick);
 
 	async function onSubmitClick(e) {
-		const response = await fetch("http://170.187.157.232:8080/api/v1/add-location", {
+		const response = await fetch("https://backend.mangroves.report/api/v1/add-location", {
 			method: "POST", // or 'PUT'
 			headers: {
 				"Content-Type": "application/json",
