@@ -25,6 +25,14 @@ function main() {
 
 	map.on('click', onMapClick);
 
+	function unshowStatusNode() {
+		setTimeout(() => {
+			const statusNode = document.getElementById("submit-status");
+			statusNode.innerText = "Status";
+			statusNode.style.display = "none";
+		}, 10000);
+	}
+
 	async function onSubmitClick(e) {
 		const responsePromise = fetch("https://backend.mangroves.report/api/v1/add-location", {
 			method: "POST", // or 'PUT'
@@ -42,6 +50,7 @@ function main() {
 			// Update status node to show success
 			statusNode.innerText = "Saved Successfully";
 			statusNode.style.display = "block";
+			unshowStatusNode();
 		} else {
 			// Update status node to show error
 			statusNode.innerText = "Error could not save coordinate!";
