@@ -114,13 +114,17 @@ mod api_init {
         routing::{get, post},
         Router,
     };
+    use hyper::Method;
     use std::{
         error::Error,
         net::{IpAddr, Ipv6Addr, SocketAddr},
         str::FromStr as _,
     };
     use tower::ServiceBuilder;
-    use tower_http::trace::TraceLayer;
+    use tower_http::{
+        cors::{Any, CorsLayer},
+        trace::TraceLayer,
+    };
 
     pub struct AxumConfig {
         pub database: DatabasePool,
@@ -129,6 +133,12 @@ mod api_init {
     }
 
     pub async fn axum_init(config: AxumConfig) -> Result<(), impl Error> {
+        let cors = CorsLayer::new()
+            // allow `GET` and `POST` when accessing the resource
+            .allow_methods([Method::GET, Method::POST])
+            // allow requests from any origin
+            .allow_origin(Any);
+
         let hello = || async { "hello from server!" };
 
         let app = Router::new()
@@ -137,7 +147,11 @@ mod api_init {
                 "/api/v1/add-location",
                 post(add_location).with_state(config.database.clone()),
             )
-            .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
+            .layer(
+                ServiceBuilder::new()
+                    .layer(TraceLayer::new_for_http())
+                    .layer(cors),
+            );
 
         let sock_addr = SocketAddr::from((
             IpAddr::from_str(config.addr.as_str()).unwrap_or(IpAddr::V6(Ipv6Addr::LOCALHOST)),
