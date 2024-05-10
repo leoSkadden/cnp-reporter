@@ -26,13 +26,27 @@ function main() {
 	map.on('click', onMapClick);
 
 	async function onSubmitClick(e) {
-		const response = await fetch("https://backend.mangroves.report/api/v1/add-location", {
+		const responsePromise = fetch("https://backend.mangroves.report/api/v1/add-location", {
 			method: "POST", // or 'PUT'
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(coords),
 		});
+
+		const statusNode = document.getElementById("submit-status");
+
+		const response = await responsePromise;
+
+		if (response.ok) {
+			// Update status node to show success
+			statusNode.innerText = "Saved Successfully";
+			statusNode.style.display = "block";
+		} else {
+			// Update status node to show error
+			statusNode.innerText = "Error could not save coordinate!";
+			statusNode.style.display = "block";
+		}
 	}
 
 	let submitButton = document.getElementById("submit-btn");
@@ -40,8 +54,6 @@ function main() {
 }
 
 function stringFromCoords(coords) {
-	console.log(coords.lat);
-	console.log(coords.lng);
 	let lat = coords.lat.toFixed(6);
 	let lng = coords.lng.toFixed(6);
 	return `${lat}, ${lng}`
