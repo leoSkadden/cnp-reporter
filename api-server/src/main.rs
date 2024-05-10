@@ -109,17 +109,13 @@ async fn add_location(
 }
 
 mod api_init {
-    use crate::{add_location, db_init::DatabasePool, Opt};
+    use crate::{add_location, db_init::DatabasePool};
     use axum::{
         routing::{get, post},
         Router,
     };
-    use hyper::Method;
-    use std::{
-        error::Error,
-        net::{IpAddr, Ipv6Addr, SocketAddr},
-        str::FromStr as _,
-    };
+    use hyper::{header::CONTENT_TYPE, Method};
+    use std::error::Error;
     use tower::ServiceBuilder;
     use tower_http::{
         cors::{Any, CorsLayer},
@@ -138,7 +134,8 @@ mod api_init {
             // allow `GET` and `POST` when accessing the resource
             .allow_methods([Method::GET, Method::POST])
             // allow requests from any origin
-            .allow_origin(Any);
+            .allow_origin(Any)
+            .allow_headers([CONTENT_TYPE]);
 
         let hello = || async { "hello from server!" };
 
@@ -153,11 +150,6 @@ mod api_init {
                     .layer(TraceLayer::new_for_http())
                     .layer(cors),
             );
-
-        let sock_addr = SocketAddr::from((
-            IpAddr::from_str(config.addr.as_str()).unwrap_or(IpAddr::V6(Ipv6Addr::LOCALHOST)),
-            config.port,
-        ));
 
         let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
 
