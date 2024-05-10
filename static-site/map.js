@@ -26,8 +26,6 @@ function main() {
 	map.on('click', onMapClick);
 
 	async function onSubmitClick(e) {
-		console.log('starting on submit click');
-		console.log(JSON.stringify(coords));
 		const response = await fetch("http://170.187.157.232:8080/api/v1/add-location", {
 			method: "POST", // or 'PUT'
 			headers: {
