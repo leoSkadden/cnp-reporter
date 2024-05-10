@@ -133,6 +133,7 @@ mod api_init {
     }
 
     pub async fn axum_init(config: AxumConfig) -> Result<(), impl Error> {
+        // TODO: Update allowed origin to be mangroves.report after updates
         let cors = CorsLayer::new()
             // allow `GET` and `POST` when accessing the resource
             .allow_methods([Method::GET, Method::POST])
