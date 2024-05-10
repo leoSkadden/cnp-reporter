@@ -9,8 +9,6 @@ use tracing_subscriber::{layer::SubscriberExt as _, util::SubscriberInitExt as _
 use crate::api_init::{axum_init, AxumConfig};
 use crate::db_init::{db_init, DatabaseConfig};
 
-const DB_URL: &str = "sqlite://sqlite.db";
-
 // Setup the command line interface with clap.
 #[derive(Parser, Debug)]
 #[clap(name = "server", about = "A server for our wasm project!")]
@@ -30,6 +28,9 @@ struct Opt {
     /// set the directory where static files are to be found
     #[clap(long = "static-dir", default_value = "../dist")]
     static_dir: String,
+
+    #[clap(long = "db-url", default_value = "sqlite://sqlite.db")]
+    db_url: String,
 }
 
 #[tokio::main]
@@ -55,13 +56,14 @@ async fn main() {
         .init();
 
     let db_config = DatabaseConfig {
-        connection_url: DB_URL,
+        connection_url: opt.db_url.clone(),
     };
     let db = db_init(db_config).await;
 
     let axum_config = AxumConfig {
         database: db,
-        options: opt,
+        addr: opt.addr,
+        port: opt.port,
     };
     let server = axum_init(axum_config);
 
@@ -122,7 +124,8 @@ mod api_init {
 
     pub struct AxumConfig {
         pub database: DatabasePool,
-        pub options: Opt,
+        pub addr: String,
+        pub port: u16,
     }
 
     pub async fn axum_init(config: AxumConfig) -> Result<(), impl Error> {
@@ -137,9 +140,8 @@ mod api_init {
             .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
 
         let sock_addr = SocketAddr::from((
-            IpAddr::from_str(config.options.addr.as_str())
-                .unwrap_or(IpAddr::V6(Ipv6Addr::LOCALHOST)),
-            config.options.port,
+            IpAddr::from_str(config.addr.as_str()).unwrap_or(IpAddr::V6(Ipv6Addr::LOCALHOST)),
+            config.port,
         ));
 
         let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
@@ -160,7 +162,7 @@ mod db_init {
     use thiserror::Error;
 
     pub struct DatabaseConfig {
-        pub(crate) connection_url: &'static str,
+        pub(crate) connection_url: String,
     }
 
     pub type DatabasePool = Pool<Sqlite>;
@@ -180,7 +182,7 @@ mod db_init {
     pub async fn db_init(db_config: DatabaseConfig) -> DatabasePool {
         tracing::info!("Initializing database...");
         let DatabaseConfig { connection_url } = db_config;
-        let database_exists = match Sqlite::database_exists(connection_url).await {
+        let database_exists = match Sqlite::database_exists(&connection_url).await {
             Ok(result) => result,
             Err(error) => {
                 tracing::error!(?error, "Errored while checking if database exists. Panicking to preserve data integrity.");
@@ -189,7 +191,7 @@ mod db_init {
         };
 
         if !database_exists {
-            match Sqlite::create_database(connection_url).await {
+            match Sqlite::create_database(&connection_url).await {
                 Ok(_) => tracing::trace!("Create db success"),
                 Err(error) => {
                     tracing::error!(
@@ -204,7 +206,7 @@ mod db_init {
             tracing::trace!("Database already exists.");
         }
 
-        let db = match SqlitePool::connect(connection_url).await {
+        let db = match SqlitePool::connect(&connection_url).await {
             Ok(pool) => {
                 tracing::trace!(connection_url, "Connected to database.");
                 pool
