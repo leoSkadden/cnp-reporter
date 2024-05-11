@@ -11,7 +11,7 @@ function main() {
 	const popup = L.popup();
 	let coords;
 
-	map.on('click', () => {
+	map.on('click', (e) => {
 		const coordDisplayNode = document.getElementById("coord-display");
 		coords = e.latlng;
 
