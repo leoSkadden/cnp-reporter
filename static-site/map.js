@@ -1,18 +1,17 @@
-// 28.059642, -80.590976
+const MRC = [28.059642, -80.590976];
 
 function main() {
-	console.log('running main');
-	let map = L.map('map').setView([28.059642, -80.590976], 13);
+	const map = L.map('map').setView(MRC, 13);
 
 	L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	}).addTo(map);
 
-	let popup = L.popup();
+	const popup = L.popup();
 	let coords;
 
-	function onMapClick(e) {
+	map.on('click', () => {
 		const coordDisplayNode = document.getElementById("coord-display");
 		coords = e.latlng;
 
@@ -21,19 +20,9 @@ function main() {
 			.setContent("Suspected CNP infection at " + coords.toString())
 			.openOn(map);
 		coordDisplayNode.innerText = stringFromCoords(coords);
-	}
+	});
 
-	map.on('click', onMapClick);
-
-	function unshowStatusNode() {
-		setTimeout(() => {
-			const statusNode = document.getElementById("submit-status");
-			statusNode.innerText = "Status";
-			statusNode.style.display = "none";
-		}, 10000);
-	}
-
-	async function onSubmitClick(e) {
+	document.getElementById("submit-btn").onclick = async () => {
 		const responsePromise = fetch("https://backend.mangroves.report/api/v1/add-location", {
 			method: "POST", // or 'PUT'
 			headers: {
@@ -50,22 +39,21 @@ function main() {
 			// Update status node to show success
 			statusNode.innerText = "Saved Successfully";
 			statusNode.style.display = "block";
-			unshowStatusNode();
+			setTimeout(() => {
+				const statusNode = document.getElementById("submit-status");
+				statusNode.innerText = "Status";
+				statusNode.style.display = "none";
+			}, 10000);
 		} else {
 			// Update status node to show error
 			statusNode.innerText = "Error could not save coordinate!";
 			statusNode.style.display = "block";
 		}
-	}
-
-	let submitButton = document.getElementById("submit-btn");
-	submitButton.onclick = onSubmitClick;
+	};
 }
 
 function stringFromCoords(coords) {
-	let lat = coords.lat.toFixed(6);
-	let lng = coords.lng.toFixed(6);
-	return `${lat}, ${lng}`
+	return `${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}`
 }
 
 window.onload = main;
