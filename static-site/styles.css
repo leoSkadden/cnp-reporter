@@ -1,4 +1,6 @@
-#map { height: 400px; }
+#map {
+	height: 400px;
+}
 
 #submit-status {
 	display: none;
@@ -8,4 +10,18 @@
 	display: grid;
 	grid-template-columns: 2fr 1fr;
 	gap: 10px;
+}
+
+.fade-out-text {
+	animation: fadeOut 5s;
+}
+
+@keyframes fadeOut {
+	0% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+	}
 }

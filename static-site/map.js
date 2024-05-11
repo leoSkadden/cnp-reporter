@@ -41,9 +41,12 @@ function main() {
 			statusNode.style.display = "block";
 			setTimeout(() => {
 				const statusNode = document.getElementById("submit-status");
+				statusNode.className = "fade-out-text";
+			}, 5000);
+			setTimeout(() => {
+				const statusNode = document.getElementById("submit-status");
 				statusNode.innerText = "Status";
-				statusNode.style.display = "none";
-			}, 10000);
+			}, 17000);
 		} else {
 			// Update status node to show error
 			statusNode.innerText = "Error could not save coordinate!";
