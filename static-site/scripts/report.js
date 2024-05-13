@@ -23,6 +23,7 @@ function main() {
 	});
 
 	document.getElementById("submit-btn").onclick = async () => {
+		console.log('starting submit')
 		const responsePromise = fetch("https://backend.mangroves.report/api/v1/add-location", {
 			method: "POST", // or 'PUT'
 			headers: {
@@ -38,15 +39,15 @@ function main() {
 		if (response.ok) {
 			// Update status node to show success
 			statusNode.innerText = "Saved Successfully";
-			statusNode.style.display = "block";
+			statusNode.className = "visible";
 			setTimeout(() => {
 				const statusNode = document.getElementById("submit-status");
-				statusNode.className = "fade-out-text";
+				statusNode.className = "hidden";
 			}, 5000);
 			setTimeout(() => {
 				const statusNode = document.getElementById("submit-status");
 				statusNode.innerText = "Status";
-			}, 17000);
+			}, 10000);
 		} else {
 			// Update status node to show error
 			statusNode.innerText = "Error could not save coordinate!";

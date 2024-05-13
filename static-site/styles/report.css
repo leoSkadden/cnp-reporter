@@ -1,0 +1,21 @@
+#map {
+	height: 400px;
+}
+
+.grid-container {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 10px;
+}
+
+.visible {
+	visibility: visible;
+	opacity: 1;
+	transition: opacity 2s linear;
+}
+
+.hidden {
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s 2s, opacity 2s linear;
+}
