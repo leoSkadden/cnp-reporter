@@ -10,6 +10,7 @@ function main() {
 
 	const popup = L.popup();
 	let coords;
+	let data;
 
 	map.on('click', (e) => {
 		const coordDisplayNode = document.getElementById("coord-display");
@@ -23,13 +24,35 @@ function main() {
 	});
 
 	document.getElementById("submit-btn").onclick = async () => {
-		console.log('starting submit')
-		const responsePromise = fetch("https://backend.mangroves.report/api/v1/add-location", {
-			method: "POST", // or 'PUT'
+		data = { ...coords, images: [] };
+
+		const imageInputNode = document.getElementById("image-input");
+		let files = imageInputNode.files;
+
+		if (files.length != 0) {
+			for (const file of files) {
+				const fileReader = new FileReader();
+
+				const readPromise = new Promise((resolve, reject) => {
+					fileReader.onloadend = () => resolve(fileReader.result);
+					fileReader.onerror = reject;
+
+					fileReader.readAsDataURL(file);
+				})
+
+				const result = await readPromise;
+
+				data.images.push(result);
+			}
+		}
+
+		const URL = "https://backend.mangroves.report";
+		const responsePromise = fetch(`${URL}/api/v1/add-location`, {
+			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(coords),
+			body: JSON.stringify(data),
 		});
 
 		const statusNode = document.getElementById("submit-status");

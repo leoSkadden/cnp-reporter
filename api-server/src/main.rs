@@ -2,8 +2,10 @@ use axum::extract::State;
 use axum::Json;
 use clap::Parser;
 use db_init::DatabasePool;
+use futures::future::join_all;
 use hyper::StatusCode;
 use serde::Deserialize;
+use sqlx::sqlite::SqliteQueryResult;
 use tracing_subscriber::{layer::SubscriberExt as _, util::SubscriberInitExt as _};
 
 use crate::api_init::{axum_init, AxumConfig};
@@ -75,18 +77,19 @@ async fn main() {
 }
 
 #[derive(Deserialize, Debug)]
-struct Location {
+struct Payload {
     lat: f64,
     lng: f64,
+    images: Vec<String>,
 }
 
 async fn add_location(
     State(database_pool): State<DatabasePool>,
-    Json(payload): Json<Location>,
+    Json(payload): Json<Payload>,
 ) -> StatusCode {
     tracing::trace!(request_payload = ?payload, "Incoming add_location request");
 
-    let result = sqlx::query(
+    let location_result = sqlx::query(
         "\
     INSERT INTO Locations (latitude, longitude, date_added)
     VALUES ($1, $2, DATETIME())",
@@ -96,10 +99,39 @@ async fn add_location(
     .execute(&database_pool)
     .await;
 
-    match result {
-        Ok(result) => {
-            tracing::info!(?result, ?payload, "Created new location");
-            StatusCode::OK
+    match location_result {
+        Ok(location_result) => {
+            tracing::info!(?location_result, "Created new location");
+
+            let location_id = location_result.last_insert_rowid();
+
+            let mut futures = vec![];
+            for image in payload.images {
+                futures.push(
+                    sqlx::query(
+                        "\
+                    INSERT INTO Images (loc, encoded_image)
+                    VALUES ($1, $2)",
+                    )
+                    .bind(location_id)
+                    .bind(image)
+                    .execute(&database_pool),
+                );
+            }
+
+            let image_result: Result<Vec<SqliteQueryResult>, sqlx::Error> =
+                join_all(futures).await.into_iter().collect();
+
+            match image_result {
+                Ok(image_result) => {
+                    tracing::info!(?image_result, "Created new image");
+                    StatusCode::OK
+                }
+                Err(error) => {
+                    tracing::error!(?error, "Error while adding new image");
+                    StatusCode::INTERNAL_SERVER_ERROR
+                }
+            }
         }
         Err(error) => {
             tracing::error!(?error, "Error while adding new location");
