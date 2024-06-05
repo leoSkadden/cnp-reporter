@@ -1,11 +1,32 @@
-#map {
-	height: 400px;
+/* Smaller Screens */
+@media (width <= 1020px) {
+	:root {
+		--map-height: 50vh;
+	}
+
+	#map {
+		height: var(--map-height);
+		width: 75vw;
+	}
+	
+	.grid-container {
+		display: grid;
+		grid-template-rows: var(--map-height) auto;
+		gap: 10px;
+	}
 }
 
-.grid-container {
-	display: grid;
-	grid-template-columns: 2fr 1fr;
-	gap: 10px;
+/* Larger Screens */
+@media (width > 1020px) {
+	#map {
+		height: 400px;
+	}
+	
+	.grid-container {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		gap: 10px;
+	}
 }
 
 .visible {

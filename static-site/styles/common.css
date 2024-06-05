@@ -5,6 +5,13 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
+body > :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
+    --minFontSize: 1rem;
+    --maxFontSize: 2rem; /* 27px; */
+    --scaler: -2vw + 2.5rem;
+    font-size: clamp(var(--minFontSize), var(--scaler), var(--maxFontSize));
+}
+
 header {
     background-color: #69B0BD;
     max-width: 100%;
