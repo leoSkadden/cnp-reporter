@@ -17,3 +17,5 @@ Cargo.lock
 sqlite.db
 sqlite.db-wal
 sqlite.db-shm
+
+.DS_Store
