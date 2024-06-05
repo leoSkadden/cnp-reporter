@@ -77,6 +77,11 @@ function main() {
 			statusNode.style.display = "block";
 		}
 	};
+
+	navigator.geolocation.getCurrentPosition((geo) => {
+		const location = [geo.coords.latitude, geo.coords.longitude]
+		map.setView(location, 13);
+	})
 }
 
 function stringFromCoords(coords) {
