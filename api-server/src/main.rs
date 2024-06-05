@@ -146,11 +146,11 @@ mod api_init {
         routing::{get, post},
         Router,
     };
-    use hyper::{header::CONTENT_TYPE, Method};
+    use hyper::{header::{CONTENT_TYPE, HeaderValue}, Method};
     use std::error::Error;
     use tower::ServiceBuilder;
     use tower_http::{
-        cors::{Any, CorsLayer},
+        cors::{CorsLayer},
         trace::TraceLayer,
     };
 
@@ -166,7 +166,7 @@ mod api_init {
             // allow `GET` and `POST` when accessing the resource
             .allow_methods([Method::GET, Method::POST])
             // allow requests from any origin
-            .allow_origin(Any)
+            .allow_origin("https://mangroves.report".parse::<HeaderValue>().unwrap())
             .allow_headers([CONTENT_TYPE]);
 
         let hello = || async { "hello from server!" };
