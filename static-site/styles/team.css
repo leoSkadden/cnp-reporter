@@ -3,3 +3,14 @@
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     gap: 10px;
 }
+
+.affiliations {
+    --minFontSize: .5rem;
+    --maxFontSize: 1rem; /* 27px; */
+    --scaler: -2vw + 2.5rem;
+    font-size: clamp(var(--minFontSize), var(--scaler), var(--maxFontSize));
+}
+
+figure figcaption {
+	color: black;
+}
