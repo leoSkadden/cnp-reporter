@@ -10,7 +10,3 @@
     --scaler: -2vw + 2.5rem;
     font-size: clamp(var(--minFontSize), var(--scaler), var(--maxFontSize));
 }
-
-figure figcaption {
-	color: black;
-}

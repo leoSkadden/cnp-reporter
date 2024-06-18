@@ -49,3 +49,7 @@ footer {
 footer>a {
     color: #041C24;
 }
+
+figure figcaption {
+	color: black;
+}

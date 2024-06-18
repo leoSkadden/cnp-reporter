@@ -1,11 +1,12 @@
 .grid-container {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 10px;
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 10px;
 }
 
-#cnp-quick {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+#symptoms {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 10px;
+	list-style-type: none;
 }

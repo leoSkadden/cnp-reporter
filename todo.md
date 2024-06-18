@@ -1,14 +1,17 @@
+# Map
+- [x] Enter address
+
 # Reporting
 - [x] Report coordinates
-- [ ] Report a picture
+- [x] Report a picture
 
 # Information
-- [ ] Simple overview
+- [x] Simple overview
   - [x] Page templated
-  - [ ] Copy updated
-- [ ] Research sharing
+  - [x] Copy updated
+- [x] Research sharing
   - [x] Page templated
-  - [ ] Copy updated
+  - [x] Copy updated
 - [ ] Meet the team
   - [x] Page templated
   - [x] Captions added
@@ -21,5 +24,5 @@
         - embed a donation widget from the donor backend
 
 # Technical
-- [X] Add ~~Tailwind~~ MVP.css
-- [ ] Add picture upload dependency
+- [x] Add ~~Tailwind~~ MVP.css
+- [x] Add picture upload dependency
